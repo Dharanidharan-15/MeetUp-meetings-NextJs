@@ -45,6 +45,8 @@ const CallList = ({ type }: { type: "ended" | "upcoming" | "recordings" }) => {
   };
 
   useEffect(() => {
+    if (type !== "recordings") return;
+
     const fetchRecordings = async () => {
       try {
         const callData = await Promise.all(
@@ -53,14 +55,14 @@ const CallList = ({ type }: { type: "ended" | "upcoming" | "recordings" }) => {
         const recordings = callData
           .filter((call) => call.recordings.length > 0)
           .flatMap((call) => call.recordings);
-
         setRecordings(recordings);
       } catch (error) {
-        toast({ title: "Try again later..." });
+        toast({ title: "Error fetching Data, Try again later..." });
       }
-      if (type === "recordings") fetchRecordings();
     };
-  }, [type, callRecordings]);
+
+    fetchRecordings();
+  }, [type, callRecordings, toast]);
 
   const calls = getCalls();
   const noCallsMessage = getNoCallsMessage();
@@ -69,9 +71,9 @@ const CallList = ({ type }: { type: "ended" | "upcoming" | "recordings" }) => {
   return (
     <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
       {calls && calls.length > 0 ? (
-        calls.map((meeting: Call | CallRecording) => (
+        calls?.map((meeting: Call | CallRecording) => (
           <MeetingCard
-            key={(meeting as Call).id}
+            key={meeting?.id}
             icon={
               type === "ended"
                 ? "/icons/previous.svg"
