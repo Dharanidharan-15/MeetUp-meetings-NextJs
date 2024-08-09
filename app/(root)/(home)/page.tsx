@@ -7,18 +7,25 @@ const Home = () => {
   const [currentTime, setCurrentTime] = useState("");
   const now = new Date();
 
-  const time = now.toLocaleTimeString("en-In", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-
   const date = new Intl.DateTimeFormat("en-In", {
     dateStyle: "full",
   }).format(now);
 
   useEffect(() => {
-    setCurrentTime(time);
-  }, [time]);
+    const updateTime = () => {
+      const now = new Date();
+      const time = now.toLocaleTimeString("en-In", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      setCurrentTime(time);
+    };
+
+    updateTime();
+    const interval = setInterval(updateTime, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <section className="flex size-full flex-col gap-10 text-white">
       <div className="h-[300px] w-full rounded-[20px] bg-hero bg-cover">
